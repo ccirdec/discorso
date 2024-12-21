@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "803950123257",
+    "project_id": "discorso-fff3f",
+    "storage_bucket": "discorso-fff3f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:803950123257:android:c754c5cbc6a9e96a862a28",
+        "android_client_info": {
+          "package_name": "app.discorso"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhFmeE3nUlld1Tcas0ukJ_fI-iMeDkyZ0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
