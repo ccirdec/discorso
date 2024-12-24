@@ -1,5 +1,7 @@
 import 'package:discorso/components/my_button.dart';
+import 'package:discorso/components/my_loading_circle.dart';
 import 'package:discorso/components/my_text_field.dart';
+import 'package:discorso/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -15,8 +17,25 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+
+  final _auth = AuthService();
+
   final TextEditingController emailController = TextEditingController();
   final TextEditingController pwController = TextEditingController();
+
+  void login() async {
+
+    showLoadingCircle(context);
+    try {
+      await _auth.loginEmailPassword(emailController.text, pwController.text);
+
+      if (mounted) hideLoadingCircle(context);
+    }
+    catch(e){
+      if (mounted) hideLoadingCircle(context);
+      print(e.toString());
+    }
+  }
 
   
 
@@ -72,7 +91,7 @@ class _LoginPageState extends State<LoginPage> {
                 
                 const SizedBox(height: 25),
 
-                MyButton(text: "Login", onTap: (){}),
+                MyButton(text: "Login", onTap: login),
 
                 const SizedBox(height: 50,),
 

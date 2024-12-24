@@ -1,4 +1,4 @@
-package com.example.discorso
+package app.discorso
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,9 +1,15 @@
 import 'package:discorso/components/my_drawer_tile.dart';
 import 'package:discorso/pages/settings_page.dart';
+import 'package:discorso/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
 
 class MyDrawer extends StatelessWidget {
-  const MyDrawer({super.key});
+  MyDrawer({super.key});
+  final _auth = AuthService();
+
+  void logout() {
+    _auth.logout();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +54,7 @@ class MyDrawer extends StatelessWidget {
                     ));
                 },
               ),
+              MyDrawerTile(title: "Logout", icon: Icons.logout, onTap: logout)
             ],
           ),
         ),
