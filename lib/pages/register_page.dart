@@ -1,5 +1,8 @@
 import 'package:discorso/components/my_button.dart';
+import 'package:discorso/components/my_loading_circle.dart';
 import 'package:discorso/components/my_text_field.dart';
+import 'package:discorso/services/auth/auth_service.dart';
+import 'package:discorso/services/database/database_service.dart';
 import 'package:flutter/material.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -14,10 +17,55 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+
+  final _auth = AuthService();
+  final _db = DatabaseService();
+
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController pwController = TextEditingController();
   final TextEditingController confirmPwController = TextEditingController();
+
+
+  void register() async {
+
+    if (pwController.text == confirmPwController.text){
+      showLoadingCircle(context);
+
+      try {
+        await _auth.registerEmailPassword(
+          emailController.text, 
+          pwController.text);
+
+          if(mounted) hideLoadingCircle(context);
+
+          await _db.saveUserInfoInFirebase(name: nameController.text, email: emailController.text);
+      }
+      catch(e){
+        if(mounted) hideLoadingCircle(context);
+
+        if(mounted) {
+          showDialog(
+            context: context, 
+            builder: (context)=>AlertDialog(
+              title: Text(e.toString()),
+            ),
+          );
+        }
+      }
+    }
+    else{
+      showDialog(
+            context: context, 
+            builder: (context)=>AlertDialog(
+              title: Text("Password don't match"),
+            ),
+          );
+    }
+
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,7 +121,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 
                 const SizedBox(height: 25),
 
-                MyButton(text: "Register", onTap: (){}),
+                MyButton(text: "Register", onTap: register),
 
                 const SizedBox(height: 50,),
 

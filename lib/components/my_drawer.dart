@@ -1,4 +1,5 @@
 import 'package:discorso/components/my_drawer_tile.dart';
+import 'package:discorso/pages/profile_page.dart';
 import 'package:discorso/pages/settings_page.dart';
 import 'package:discorso/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +42,16 @@ class MyDrawer extends StatelessWidget {
                   Navigator.pop(context);
                 },
               ),
-          
+
+              MyDrawerTile(
+                title: "Profile",
+                icon: Icons.person,
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage(uid: _auth.getCurrentUid())));
+                },
+              ),
+
               MyDrawerTile(
                 title: "Settings",
                 icon: Icons.settings,
@@ -54,6 +64,7 @@ class MyDrawer extends StatelessWidget {
                     ));
                 },
               ),
+              const Spacer(),
               MyDrawerTile(title: "Logout", icon: Icons.logout, onTap: logout)
             ],
           ),

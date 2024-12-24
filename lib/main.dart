@@ -1,5 +1,6 @@
 import 'package:discorso/firebase_options.dart';
 import 'package:discorso/services/auth/auth_gate.dart';
+import 'package:discorso/services/database/database_provider.dart';
 import 'package:discorso/themes/theme_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
@@ -15,10 +16,16 @@ void main() async {
     print("Firebase initialization error: $e");
   }
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => ThemeProvider(),
-      child: const MyApp(),
-    ),
+    MultiProvider(providers: [
+      ChangeNotifierProvider(
+        create: (context) => ThemeProvider(),),
+
+      ChangeNotifierProvider(
+        create: (context) => DatabaseProvider(),),
+      ],
+        child: const MyApp(),
+    
+    )
   );
 }
 
