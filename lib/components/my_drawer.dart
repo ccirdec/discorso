@@ -26,15 +26,15 @@ class MyDrawer extends StatelessWidget {
                 child: Icon(
                   Icons.person,
                   size: 72,
-                  color:Theme.of(context).colorScheme.primary,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
-          
               Divider(
                 color: Theme.of(context).colorScheme.secondary,
               ),
-              const SizedBox(height: 10,),
-             
+              const SizedBox(
+                height: 10,
+              ),
               MyDrawerTile(
                 title: "Home",
                 icon: Icons.home,
@@ -42,26 +42,29 @@ class MyDrawer extends StatelessWidget {
                   Navigator.pop(context);
                 },
               ),
-
               MyDrawerTile(
                 title: "Profile",
                 icon: Icons.person,
                 onTap: () {
                   Navigator.pop(context);
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage(uid: _auth.getCurrentUid())));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              ProfilePage(uid: _auth.getCurrentUid())));
                 },
               ),
-
               MyDrawerTile(
                 title: "Settings",
                 icon: Icons.settings,
                 onTap: () {
                   Navigator.pop(context);
-          
+
                   Navigator.push(
-                    context, 
-                    MaterialPageRoute(builder: (context) => SettingsPage(),
-                    ));
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SettingsPage(),
+                      ));
                 },
               ),
               const Spacer(),

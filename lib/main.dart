@@ -15,18 +15,17 @@ void main() async {
   } catch (e) {
     print("Firebase initialization error: $e");
   }
-  runApp(
-    MultiProvider(providers: [
+  runApp(MultiProvider(
+    providers: [
       ChangeNotifierProvider(
-        create: (context) => ThemeProvider(),),
-
+        create: (context) => ThemeProvider(),
+      ),
       ChangeNotifierProvider(
-        create: (context) => DatabaseProvider(),),
-      ],
-        child: const MyApp(),
-    
-    )
-  );
+        create: (context) => DatabaseProvider(),
+      ),
+    ],
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {

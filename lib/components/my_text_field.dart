@@ -10,7 +10,7 @@ class MyTextField extends StatelessWidget {
     required this.controller,
     required this.hintText,
     required this.obscureText,
-    });
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,19 +18,18 @@ class MyTextField extends StatelessWidget {
       controller: controller,
       obscureText: obscureText,
       decoration: InputDecoration(
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary),
-          borderRadius: BorderRadius.circular(12)
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
-          borderRadius: BorderRadius.circular(12)
-        ),
-        fillColor: Theme.of(context).colorScheme.secondary,
-        filled: true,
-        hintText: hintText,
-        hintStyle: TextStyle(color: Theme.of(context).colorScheme.primary)
-      ),
+          enabledBorder: OutlineInputBorder(
+              borderSide:
+                  BorderSide(color: Theme.of(context).colorScheme.tertiary),
+              borderRadius: BorderRadius.circular(12)),
+          focusedBorder: OutlineInputBorder(
+              borderSide:
+                  BorderSide(color: Theme.of(context).colorScheme.primary),
+              borderRadius: BorderRadius.circular(12)),
+          fillColor: Theme.of(context).colorScheme.secondary,
+          filled: true,
+          hintText: hintText,
+          hintStyle: TextStyle(color: Theme.of(context).colorScheme.primary)),
     );
   }
 }
