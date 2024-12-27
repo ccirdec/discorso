@@ -50,6 +50,42 @@ class DatabaseService {
     }
   }
 
+  Future<void> deleteUserInfoFromFirebase(String uid) async {
+    WriteBatch batch = _db.batch();
+
+    DocumentReference userDoc = _db.collection("Users").doc(uid);
+    batch.delete(userDoc);
+
+    QuerySnapshot userPosts =
+        await _db.collection("Posts").where('uid', isEqualTo: uid).get();
+
+    for (var post in userPosts.docs) {
+      batch.delete(post.reference);
+    }
+
+    QuerySnapshot userComments =
+        await _db.collection("Comments").where('uid', isEqualTo: uid).get();
+
+    for (var comment in userComments.docs) {
+      batch.delete(comment.reference);
+    }
+
+    QuerySnapshot allPosts = await _db.collection("Posts").get();
+    for (QueryDocumentSnapshot post in allPosts.docs) {
+      Map<String, dynamic> postData = post.data() as Map<String, dynamic>;
+      var likedBy = postData['likedBy'] as List<dynamic>? ?? [];
+
+      if (likedBy.contains(uid)) {
+        batch.update(post.reference, {
+          'likedBy': FieldValue.arrayRemove([uid]),
+          'likes': FieldValue.increment(-1),
+        });
+      }
+    }
+
+    await batch.commit();
+  }
+
   // Post Message
   Future<void> postMessageInFirebase(String message) async {
     try {
@@ -137,17 +173,17 @@ class DatabaseService {
       UserProfile? user = await getUserFromFirebase(uid);
 
       Comment newComment = Comment(
-        id: '', 
-        postId: postId, 
-        uid: uid, 
-        name: user!.name, 
-        username: user.username, 
-        message: message, 
-        timestamp: Timestamp.now());
+          id: '',
+          postId: postId,
+          uid: uid,
+          name: user!.name,
+          username: user.username,
+          message: message,
+          timestamp: Timestamp.now());
 
       Map<String, dynamic> newCommentMap = newComment.toMap();
       await _db.collection("Comments").add(newCommentMap);
-    } catch(e){
+    } catch (e) {
       print(e);
     }
   }
@@ -160,9 +196,12 @@ class DatabaseService {
     }
   }
 
-  Future<List<Comment>> getCommentsFromFirebase(String postId) async{
+  Future<List<Comment>> getCommentsFromFirebase(String postId) async {
     try {
-      QuerySnapshot snapshot = await _db.collection("Comments").where("postId", isEqualTo: postId).get();
+      QuerySnapshot snapshot = await _db
+          .collection("Comments")
+          .where("postId", isEqualTo: postId)
+          .get();
 
       return snapshot.docs.map((doc) => Comment.fromDocument(doc)).toList();
     } catch (e) {
@@ -173,7 +212,112 @@ class DatabaseService {
 
   // Terkait Akun
 
-  // Folloe
+  Future<void> reportUserInFirebase(String postId, userId) async {
+    final currentUserId = _auth.currentUser!.uid;
+
+    final report = {
+      'reportBy': currentUserId,
+      'messageId': postId,
+      'messageOwnerId': userId,
+      'timestamp': FieldValue.serverTimestamp(),
+    };
+
+    await _db.collection("Reports").add(report);
+  }
+
+  Future<void> blockUserInFirebase(String userId) async {
+    final currentUserId = _auth.currentUser!.uid;
+
+    await _db
+        .collection("Users")
+        .doc(currentUserId)
+        .collection("BlockedUsers")
+        .doc(userId)
+        .set({});
+  }
+
+  Future<void> unblockUserInFirebase(String blockedUserId) async {
+    final currentUserId = _auth.currentUser!.uid;
+
+    await _db
+        .collection("Users")
+        .doc(currentUserId)
+        .collection("BlockedUsers")
+        .doc(blockedUserId)
+        .delete();
+  }
+
+  Future<List<String>> getBlockedUidsFromFirebase() async {
+    final currentUserId = _auth.currentUser!.uid;
+
+    final snapshot = await _db
+        .collection("Users")
+        .doc(currentUserId)
+        .collection("BlockedUsers")
+        .get();
+
+    return snapshot.docs.map((doc) => doc.id).toList();
+  }
+
+  // Follow
+  Future<void> followUserInFirebase(String uid) async {
+    final currentUserId = _auth.currentUser!.uid;
+
+    await _db
+        .collection("Users")
+        .doc(currentUserId)
+        .collection("Following")
+        .doc(uid)
+        .set({});
+
+    await _db
+        .collection("Users")
+        .doc(uid)
+        .collection("Followers")
+        .doc(currentUserId)
+        .set({});
+  }
+
+  Future<void> unFollowUserInFirebase(String uid) async {
+    final currentUserId = _auth.currentUser!.uid;
+
+    await _db
+        .collection("Users")
+        .doc(currentUserId)
+        .collection("Following")
+        .doc(uid)
+        .delete();
+
+    await _db
+        .collection("Users")
+        .doc(uid)
+        .collection("Followers")
+        .doc(currentUserId)
+        .delete();
+  }
+
+  Future<List<String>> getFollowerUidsFromFirebase(String uid) async {
+    final snapshot =
+        await _db.collection("Users").doc(uid).collection("Followers").get();
+
+    return snapshot.docs.map((doc) => doc.id).toList();
+  }
+
+  Future<List<String>> getFollowingUidsFromFirebase(String uid) async {
+    final snapshot =
+        await _db.collection("Users").doc(uid).collection("Following").get();
+
+    return snapshot.docs.map((doc) => doc.id).toList();
+  }
 
   // Search
+
+  Future<List<UserProfile>> searchUserInFirebase(String searchTerm) async {
+    try {
+      QuerySnapshot snapshot = await _db.collection("Users").where('username', isGreaterThanOrEqualTo: searchTerm).where('username', isLessThanOrEqualTo: '$searchTerm\uf8ff').get();
+      return snapshot.docs.map((doc) => UserProfile.fromDocument(doc)).toList();
+    } catch (e) {
+      return [];
+    }
+  }
 }

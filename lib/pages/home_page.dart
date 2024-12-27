@@ -7,7 +7,6 @@ import 'package:discorso/services/database/database_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -16,11 +15,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   late final listeningProvider = Provider.of<DatabaseProvider>(context);
 
-  late final databaseProvider = Provider.of<DatabaseProvider>(context, listen: false);
-
+  late final databaseProvider =
+      Provider.of<DatabaseProvider>(context, listen: false);
 
   final _messageController = TextEditingController();
 
@@ -35,61 +33,78 @@ class _HomePageState extends State<HomePage> {
     await databaseProvider.loadAllPosts();
   }
 
-  void _openPostMessageBox(){
+  void _openPostMessageBox() {
     showDialog(
-      context: context, 
-      builder: (context)=> MyInputAlertBox(
-        textController: _messageController, 
-        hintText: "What's on your mind", 
-        onPressed: () async {
-          await postMessage(_messageController.text);
-        }, 
-        onPressedText: "Post"
-        ),
+      context: context,
+      builder: (context) => MyInputAlertBox(
+          textController: _messageController,
+          hintText: "What's on your mind",
+          onPressed: () async {
+            await postMessage(_messageController.text);
+          },
+          onPressedText: "Post"),
     );
   }
 
-  Future<void> postMessage(String message) async{
+  Future<void> postMessage(String message) async {
     await databaseProvider.postMessage(message);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      drawer: MyDrawer(),
-      appBar: AppBar(centerTitle: true,
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        drawer: MyDrawer(),
+        appBar: AppBar(
+          centerTitle: true,
           title: Image.asset(
-            'assets/logo.png', 
+            'assets/logo.png',
             height: 40,
           ),
+          bottom: TabBar(
+            dividerColor: Colors.transparent,
+            labelColor: Theme.of(context).colorScheme.inversePrimary,
+            unselectedLabelColor: Theme.of(context).colorScheme.primary,
+            indicatorColor: Theme.of(context).colorScheme.inversePrimary,
+            tabs: const [
+              Tab(
+                text: "For you",
+              ),
+              Tab(text: "Following"),
+            ],
           ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _openPostMessageBox,
-        child: Icon(Icons.message),
         ),
-      
-      body: _buildPostList(listeningProvider.allPost),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _openPostMessageBox,
+          child: Icon(Icons.message),
+        ),
+        body: TabBarView(children: [
+          _buildPostList(listeningProvider.allPost),
+          _buildPostList(listeningProvider.followingPosts),
+        ]),
+      ),
     );
   }
-  Widget _buildPostList(List<Post> posts){
+
+  Widget _buildPostList(List<Post> posts) {
     return posts.isEmpty
-      ? 
-      Center(
-        child: Text("Nothing Here..", style: TextStyle(color: Theme.of(context).colorScheme.primary,))
-      )
-      :
-      ListView.builder(
-        itemCount: posts.length,
-        itemBuilder: (context, index) {
-        final post = posts[index];
+        ? Center(
+            child: Text("Nothing Here..",
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                )))
+        : ListView.builder(
+            itemCount: posts.length,
+            itemBuilder: (context, index) {
+              final post = posts[index];
 
-        return MyPostTile(
-          post: post,
-          onUserTap:() => goUserPage(context, post.uid),
-          onPostTap: () => goPostPage(context, post),
-          );
-
-      });
-  } 
+              return MyPostTile(
+                post: post,
+                onUserTap: () => goUserPage(context, post.uid),
+                onPostTap: () => goPostPage(context, post),
+              );
+            });
+  }
 }

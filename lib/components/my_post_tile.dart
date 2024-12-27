@@ -1,4 +1,5 @@
 import 'package:discorso/components/my_input_alert_box.dart';
+import 'package:discorso/helper/time_formatter.dart';
 import 'package:discorso/models/post.dart';
 import 'package:discorso/services/auth/auth_service.dart';
 import 'package:discorso/services/database/database_provider.dart';
@@ -41,16 +42,16 @@ class _MyPostTileState extends State<MyPostTile> {
 
   final _commentController = TextEditingController();
 
-  void _openNewCommentBox(){
+  void _openNewCommentBox() {
     showDialog(
-      context: context, 
-      builder: (context) => MyInputAlertBox(
-      textController: _commentController, 
-      hintText: "Type a comments..", 
-      onPressed: () async {
-        await _addComment();
-      }, 
-      onPressedText: "Post") );
+        context: context,
+        builder: (context) => MyInputAlertBox(
+            textController: _commentController,
+            hintText: "Type a comments..",
+            onPressed: () async {
+              await _addComment();
+            },
+            onPressedText: "Post"));
   }
 
   Future<void> _addComment() async {
@@ -58,8 +59,7 @@ class _MyPostTileState extends State<MyPostTile> {
 
     try {
       await databaseProvider.addComment(
-        widget.post.id, 
-        _commentController.text.trim());
+          widget.post.id, _commentController.text.trim());
     } catch (e) {
       print(e);
     }
@@ -94,12 +94,16 @@ class _MyPostTileState extends State<MyPostTile> {
                       title: const Text("Report"),
                       onTap: () {
                         Navigator.pop(context);
+
+                        _reportPostConfirmationBox();
                       }),
                   ListTile(
                     leading: const Icon(Icons.block),
                     title: const Text("Block User"),
                     onTap: () {
                       Navigator.pop(context);
+
+                      _blockUserConfirmationBox();
                     },
                   )
                 ],
@@ -114,6 +118,55 @@ class _MyPostTileState extends State<MyPostTile> {
         });
   }
 
+  void _reportPostConfirmationBox() {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: const Text("Report Message"),
+              content:
+                  const Text("Are you sure you want to report this message?"),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("Cancel"),
+                ),
+                TextButton(
+                    onPressed: () async {
+                      await databaseProvider.reportUser(
+                          widget.post.id, widget.post.uid);
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Message reported")));
+                      Navigator.pop(context);
+                    },
+                    child: const Text("Report"))
+              ],
+            ));
+  }
+
+  void _blockUserConfirmationBox() {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: const Text("Block User"),
+              content: const Text("Are you sure you want to Block this User?"),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("Cancel"),
+                ),
+                TextButton(
+                    onPressed: () async {
+                      await databaseProvider.blockUser(widget.post.uid);
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("User blocked!")));
+                      Navigator.pop(context);
+                    },
+                    child: const Text("Block"))
+              ],
+            ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -140,7 +193,7 @@ class _MyPostTileState extends State<MyPostTile> {
               child: Row(
                 children: [
                   Icon(Icons.person,
-                      color: Theme.of(context).colorScheme.inversePrimary),
+                      color: Theme.of(context).colorScheme.primary),
                   SizedBox(width: 10),
                   Text(widget.post.name,
                       style: TextStyle(fontWeight: FontWeight.bold)),
@@ -213,7 +266,13 @@ class _MyPostTileState extends State<MyPostTile> {
                           color: Theme.of(context).colorScheme.primary),
                     )
                   ],
-                )
+                ),
+                const Spacer(),
+                Text(
+                  formatTimeStamp(widget.post.timestamp),
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.primary),
+                ),
               ],
             )
           ],

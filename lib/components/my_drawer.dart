@@ -1,5 +1,6 @@
 import 'package:discorso/components/my_drawer_tile.dart';
 import 'package:discorso/pages/profile_page.dart';
+import 'package:discorso/pages/search_page.dart';
 import 'package:discorso/pages/settings_page.dart';
 import 'package:discorso/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
@@ -54,6 +55,21 @@ class MyDrawer extends StatelessWidget {
                               ProfilePage(uid: _auth.getCurrentUid())));
                 },
               ),
+
+              MyDrawerTile(
+                title: "Search",
+                icon: Icons.search,
+                onTap: () {
+                  Navigator.pop(context);
+
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SearchPage(),
+                      ));
+                },
+              ),
+
               MyDrawerTile(
                 title: "Settings",
                 icon: Icons.settings,
