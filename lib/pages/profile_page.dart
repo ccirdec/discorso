@@ -126,7 +126,8 @@ class _ProfilePageState extends State<ProfilePage> {
         title: Text(_isloading ? '' : user!.name),
         foregroundColor: Theme.of(context).colorScheme.primary,
         leading: IconButton(
-            onPressed: () => goHomePage(context), icon: const Icon(Icons.arrow_back)),
+            onPressed: () => goHomePage(context),
+            icon: const Icon(Icons.arrow_back)),
       ),
       body: ListView(
         children: [
@@ -156,10 +157,21 @@ class _ProfilePageState extends State<ProfilePage> {
             postCount: allUserPosts.length,
             followerCount: followerCount,
             followingCount: followingCount,
-            onTap: () => Navigator.push(
+            onTapFollowers: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => FollowListPage(uid: widget.uid),
+                  builder: (context) => FollowListPage(
+                    uid: widget.uid,
+                    initialIndex: 0, // Tab "Followers"
+                  ),
+                )),
+            onTapFollowing: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FollowListPage(
+                    uid: widget.uid,
+                    initialIndex: 1, // Tab "Following"
+                  ),
                 )),
           ),
           const SizedBox(

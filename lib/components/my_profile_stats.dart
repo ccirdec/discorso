@@ -4,14 +4,16 @@ class MyProfileStats extends StatelessWidget {
   final int postCount;
   final int followerCount;
   final int followingCount;
-  final void Function()? onTap;
+  final void Function()? onTapFollowers;
+  final void Function()? onTapFollowing;
 
   const MyProfileStats({
     super.key,
     required this.postCount,
     required this.followerCount,
     required this.followingCount,
-    required this.onTap
+    this.onTapFollowers,
+    this.onTapFollowing,
   });
 
   @override
@@ -22,24 +24,24 @@ class MyProfileStats extends StatelessWidget {
     var textStyleForText =
         TextStyle(color: Theme.of(context).colorScheme.primary);
 
-    return GestureDetector(
-      onTap: onTap,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(
-            width: 100,
-            child: Column(
-              children: [
-                Text(
-                  postCount.toString(),
-                  style: textStyleForCount,
-                ),
-                Text("Posts", style: textStyleForText)
-              ],
-            ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(
+          width: 100,
+          child: Column(
+            children: [
+              Text(
+                postCount.toString(),
+                style: textStyleForCount,
+              ),
+              Text("Posts", style: textStyleForText)
+            ],
           ),
-          SizedBox(
+        ),
+        GestureDetector(
+          onTap: onTapFollowers,
+          child: SizedBox(
             width: 100,
             child: Column(
               children: [
@@ -48,7 +50,10 @@ class MyProfileStats extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(
+        ),
+        GestureDetector(
+          onTap: onTapFollowing,
+          child: SizedBox(
             width: 100,
             child: Column(
               children: [
@@ -56,9 +61,9 @@ class MyProfileStats extends StatelessWidget {
                 Text("Following", style: textStyleForText)
               ],
             ),
-          )
-        ],
-      ),
+          ),
+        )
+      ],
     );
   }
 }

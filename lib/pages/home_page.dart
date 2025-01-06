@@ -81,11 +81,17 @@ class _HomePageState extends State<HomePage> {
           child: Icon(Icons.message),
         ),
         body: TabBarView(children: [
-          _buildPostList(listeningProvider.allPost),
-          _buildPostList(listeningProvider.followingPosts),
+          _buildRefreshablePostList(listeningProvider.allPost),
+          _buildRefreshablePostList(listeningProvider.followingPosts),
         ]),
       ),
     );
+  }
+
+  Widget _buildRefreshablePostList(List<Post> posts){
+    return RefreshIndicator(
+      child: _buildPostList(posts), 
+      onRefresh: loadAllPosts);
   }
 
   Widget _buildPostList(List<Post> posts) {

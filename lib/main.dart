@@ -1,4 +1,5 @@
 import 'package:discorso/firebase_options.dart';
+import 'package:discorso/pages/splash_screen.dart';
 import 'package:discorso/services/auth/auth_gate.dart';
 import 'package:discorso/services/database/database_provider.dart';
 import 'package:discorso/themes/theme_provider.dart';
@@ -37,7 +38,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
-        '/':(context) => const AuthGate()
+        '/':(context) => const SplashScreen(),
+        '/splash': (context)=> const SplashScreen(),
+        '/auth':(context) => const AuthGate()
       },
       theme: Provider.of<ThemeProvider>(context).themeData,
     );

@@ -6,7 +6,9 @@ import 'package:provider/provider.dart';
 
 class FollowListPage extends StatefulWidget {
   final String uid;
-  const FollowListPage({super.key, required this.uid});
+  final int initialIndex;
+
+  const FollowListPage({super.key, required this.uid, required this.initialIndex});
 
   @override
   State<FollowListPage> createState() => _FollowListPageState();
@@ -41,6 +43,7 @@ class _FollowListPageState extends State<FollowListPage> {
 
     return DefaultTabController(
       length: 2,
+      initialIndex: widget.initialIndex,
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: AppBar(
