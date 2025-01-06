@@ -23,7 +23,7 @@ class _SearchPageState extends State<SearchPage> {
           title: TextField(
             controller: _searchController,
             decoration: InputDecoration(
-                hintText: "Seacrh Users...",
+                hintText: "Search Users...",
                 hintStyle:
                     TextStyle(color: Theme.of(context).colorScheme.primary),
                 border: InputBorder.none),
